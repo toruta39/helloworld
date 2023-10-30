@@ -1,0 +1,25 @@
+services:
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_ROOT_PASSWORD: example
+    volumes:
+      - db-data:/var/lib/mysql
+  cache:
+    image: redis:7
+  greeting:
+    build:
+      context: services/greeting
+      args:
+        GOARCH: arm64
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+      - cache
+  greeter:
+    build: clients/greeter
+    ports:
+      - 3000:3000
+volumes:
+  db-data:
